@@ -8,7 +8,7 @@ CC=g++
 SOURCE_DIR=src
 SOURCES = $(wildcard *.cpp) $(wildcard */*.cpp)
 
-CPPFLAGS = -std=c++17 -Iinclude -I/usr/local/opt/openssl/include -I$(WSCPP) $(DISABLE_SSL1_WARN)
+CPPFLAGS = -std=c++17 -Iinclude -Ithirdparty -I/usr/local/opt/openssl/include -I$(WSCPP) $(DISABLE_SSL1_WARN)
 LDLIBS = -lssl -lcrypto -L/usr/local/lib -L/usr/local/opt/openssl/lib
 
 EXECUTABLE = main
