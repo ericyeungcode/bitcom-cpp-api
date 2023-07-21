@@ -38,16 +38,45 @@ void testRetApi(const std::string &apiHost, const std::string &ak, const std::st
                                      {"limit", "1"}});
 }
 
-void testPublicWs()
+void testPublicWs(const std::string & wsHost)
 {
-    run_ws_app(
-        "wss://betaws.bitexch.dev",
+    run_ws_app(wsHost,
         [](client *c, websocketpp::connection_hdl, client::message_ptr msg)
         { std::cout << "on_message: " << msg->get_payload() << std::endl; },
         [](client *c, websocketpp::connection_hdl hdl)
         {
-            std::cout << "on_open" << std::endl;
-            std::string req = R"({"type": "subscribe", "instruments": ["BTC-USD-PERPETUAL"], "channels": ["depth1"], "interval": "raw"})";
+            nlohmann::json js;
+            js["type"] = "subscribe";
+            js["instruments"] = {"BTC-USD-PERPETUAL"};
+            js["channels"] = {"depth1"};
+            js["interval"] = "raw";
+            auto req = js.dump();
+            std::cout << "on_open, ws request: " << req <<  std::endl;            
+            c->send(hdl, req, websocketpp::frame::opcode::text);
+        });
+}
+
+void testPrivateWs(const std::string & wsHost, const std::string &restApiHost, const std::string &ak, const std::string &sk)
+{
+    BitcomRestApi bitRestClient(restApiHost, ak, sk);
+    auto ret = bitRestClient.wsAuth({});
+    auto authRet = nlohmann::json::parse(ret->body);
+    cout << authRet.dump() << endl;
+    auto token = authRet["data"]["token"];
+
+    run_ws_app(
+        wsHost,
+        [](client *c, websocketpp::connection_hdl, client::message_ptr msg)
+        { std::cout << "on_message: " << msg->get_payload() << std::endl; },
+        [=](client *c, websocketpp::connection_hdl hdl)
+        {
+            nlohmann::json js;
+            js["type"] = "subscribe";
+            js["channels"] = {"um_account"};
+            js["interval"] = "100ms";
+            js["token"] = token;
+            auto req = js.dump();
+            std::cout << "on_open, ws request: " << req <<  std::endl;
             c->send(hdl, req, websocketpp::frame::opcode::text);
         });
 }
@@ -64,7 +93,9 @@ int main()
 
     // testRetApi(apiHost, ak, sk);
 
-    testPublicWs();
+    // testPublicWs("wss://betaws.bitexch.dev");
+
+    testPrivateWs("wss://betaws.bitexch.dev", apiHost, ak, sk);
 
     return 0;
 }
