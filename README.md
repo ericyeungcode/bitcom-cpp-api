@@ -1,1 +1,1 @@
-# bitcom-cpp-api
+# bit.com C++ api sdk
