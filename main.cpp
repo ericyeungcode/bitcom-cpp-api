@@ -81,21 +81,35 @@ void testPrivateWs(const std::string & wsHost, const std::string &restApiHost, c
         });
 }
 
-int main()
+int main(int argc, char **argv)
 {
-    std::string home_dir = getenv("HOME");
-    cout << "home: " << home_dir << "\n";
-    std::ifstream f(home_dir + "/cpp_twap.json");
-    nlohmann::json jsonCfg = nlohmann::json::parse(f);
-    string apiHost = jsonCfg["restAddr"];
-    string ak = jsonCfg["accessKey"];
-    string sk = jsonCfg["secretKey"];
+    string mode;
+    if (argc != 2) {
+        cout << "Invalid argument: input mode[rest/public-ws/private-ws]" << endl;
+        return -1;
+    }
+    mode = string(argv[1]);
 
-    // testRetApi(apiHost, ak, sk);
+    map<string,string> varMap;
+    for(const auto &x: {"BITCOM_REST_HOST", "BITCOM_WS_HOST", "BITCOM_AK", "BITCOM_SK"}) {
+        std::string val = getenv(x);
+        if (val.empty()) {
+            cout << "Failed to lookup environment variable: " << x << endl;
+            return -1;
+        }
+        varMap[x] = val;
+    }
 
-    // testPublicWs("wss://betaws.bitexch.dev");
-
-    testPrivateWs("wss://betaws.bitexch.dev", apiHost, ak, sk);
+    if (mode == "rest") {
+        testRetApi(varMap["BITCOM_REST_HOST"], varMap["BITCOM_AK"], varMap["BITCOM_SK"]);
+    } else if (mode == "public-ws") {
+       testPublicWs(varMap["BITCOM_WS_HOST"]); 
+    } else if (mode == "private-ws") {
+        testPrivateWs(varMap["BITCOM_WS_HOST"], varMap["BITCOM_REST_HOST"], varMap["BITCOM_AK"], varMap["BITCOM_SK"]);
+    } else {
+        cout << "Invalid mode " << mode << endl;
+        return -1;
+    }
 
     return 0;
 }
