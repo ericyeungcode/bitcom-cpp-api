@@ -3,10 +3,8 @@
 #################################
 # require boost lib
 # linux(ubuntu): sudo apt install libboost-all-dev
-#################################
-
-
 # use websocketpp in vcpkg (websocketpp is header-only library)
+#################################
 
 UNAME := $(shell uname)
 
@@ -16,13 +14,14 @@ SOURCES = $(wildcard *.cpp) $(wildcard */*.cpp)
 
 ifeq ($(UNAME), Linux)
 	WSCPP = $(HOME)/vcpkg/packages/websocketpp_x64-linux/include
-	CPPFLAGS = -std=c++17 -Iinclude -Ithirdparty -I/usr/local/opt/openssl/include -I$(WSCPP) -Wno-deprecated-declarations
-	LDLIBS = -lssl -lcrypto -L/usr/lib
+	CPPFLAGS = -std=c++17 -Iinclude -Ithirdparty -I$(WSCPP) -Wno-deprecated-declarations
+	LDLIBS = -L/usr/lib -lssl -lcrypto -lpthread 
+	
 endif
 
 ifeq ($(UNAME), Darwin)
 	WSCPP = $(HOME)/vcpkg/packages/websocketpp_x64-osx/include
-	CPPFLAGS = -std=c++17 -Iinclude -Ithirdparty -I$(WSCPP) -Wno-deprecated-declarations
+	CPPFLAGS = -std=c++17 -Iinclude -Ithirdparty -I/usr/local/opt/openssl/include -I$(WSCPP) -Wno-deprecated-declarations
 	LDLIBS = -lssl -lcrypto -L/usr/local/lib -L/usr/local/opt/openssl/lib
 endif
 
