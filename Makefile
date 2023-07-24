@@ -1,15 +1,32 @@
 #!/usr/bin/make -f
 
+#################################
+# require boost lib
+# linux(ubuntu): sudo apt install libboost-all-dev
+#################################
+
+
 # use websocketpp in vcpkg (websocketpp is header-only library)
-WSCPP = /Users/ericyeung/vcpkg/packages/websocketpp_x64-osx/include
-DISABLE_SSL1_WARN = -Wno-deprecated-declarations
+
+UNAME := $(shell uname)
 
 CC=g++
 SOURCE_DIR=src
 SOURCES = $(wildcard *.cpp) $(wildcard */*.cpp)
 
-CPPFLAGS = -std=c++17 -Iinclude -Ithirdparty -I/usr/local/opt/openssl/include -I$(WSCPP) $(DISABLE_SSL1_WARN)
-LDLIBS = -lssl -lcrypto -L/usr/local/lib -L/usr/local/opt/openssl/lib
+ifeq ($(UNAME), Linux)
+	WSCPP = $(HOME)/vcpkg/packages/websocketpp_x64-linux/include
+	CPPFLAGS = -std=c++17 -Iinclude -Ithirdparty -I/usr/local/opt/openssl/include -I$(WSCPP) -Wno-deprecated-declarations
+	LDLIBS = -lssl -lcrypto -L/usr/lib
+endif
+
+ifeq ($(UNAME), Darwin)
+	WSCPP = $(HOME)/vcpkg/packages/websocketpp_x64-osx/include
+	CPPFLAGS = -std=c++17 -Iinclude -Ithirdparty -I$(WSCPP) -Wno-deprecated-declarations
+	LDLIBS = -lssl -lcrypto -L/usr/local/lib -L/usr/local/opt/openssl/lib
+endif
+
+
 
 EXECUTABLE = main
 # pattern substitute
