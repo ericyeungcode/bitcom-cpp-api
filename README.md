@@ -13,6 +13,7 @@ https://www.bit.com/docs/en-us/spot.html#spot-api-hosts-production
 
 # Tested OS 
 
+* Ubuntu 20.04 LTS
 * MacOs Ventura
 
 # C++ version
