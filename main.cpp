@@ -15,7 +15,7 @@ void testRetApi(const std::string &apiHost, const std::string &ak, const std::st
     // bitRestClient.queryUmAccount({});
     // std::this_thread::sleep_for(std::chrono::seconds(1));
 
-    bitRestClient.linearNewBatchNewOrders(
+    bitRestClient.linearNewBatchOrders(
         {{"currency", "USD"},
          {"orders_data", {
             {{"instrument_id", "BTC-USD-PERPETUAL"}, {"price", "20000"}, {"qty", "1.2"}, {"side", "buy"}}, 

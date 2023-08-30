@@ -365,12 +365,12 @@ httplib::Result BitcomRestApi::linearCancelOrder(const nlohmann::json &jsonBody)
     return this->doPrivateCallWithJsonBody(HTTP_POST, V1_LINEAR_CANCEL_ORDERS, jsonBody);
 }
 
-httplib::Result BitcomRestApi::linearNewBatchNewOrders(const nlohmann::json &jsonBody)
+httplib::Result BitcomRestApi::linearNewBatchOrders(const nlohmann::json &jsonBody)
 {
     return this->doPrivateCallWithJsonBody(HTTP_POST, V1_LINEAR_BATCH_ORDERS, jsonBody);
 }
 
-httplib::Result BitcomRestApi::linearAmendBatchNewOrders(const nlohmann::json &jsonBody)
+httplib::Result BitcomRestApi::linearAmendBatchOrders(const nlohmann::json &jsonBody)
 {
     return this->doPrivateCallWithJsonBody(HTTP_POST, V1_LINEAR_AMEND_BATCH_ORDERS,
                                            jsonBody);

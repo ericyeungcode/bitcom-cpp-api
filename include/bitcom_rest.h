@@ -42,8 +42,8 @@ public:
     httplib::Result linearNewOrder(const nlohmann::json &jsonBody);
     httplib::Result linearAmendOrder(const nlohmann::json &jsonBody);
     httplib::Result linearCancelOrder(const nlohmann::json &jsonBody);
-    httplib::Result linearNewBatchNewOrders(const nlohmann::json &jsonBody);
-    httplib::Result linearAmendBatchNewOrders(const nlohmann::json &jsonBody);
+    httplib::Result linearNewBatchOrders(const nlohmann::json &jsonBody);
+    httplib::Result linearAmendBatchOrders(const nlohmann::json &jsonBody);
     httplib::Result linearQueryMmpState(const nlohmann::json &jsonBody);
     httplib::Result linearUpdateMmpConfig(const nlohmann::json &jsonBody);
     httplib::Result linearResetMmpConfig(const nlohmann::json &jsonBody);
