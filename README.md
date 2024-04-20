@@ -24,7 +24,7 @@ https://www.bit.com/docs/en-us/spot.html#spot-api-hosts-production
 
 * Json lib: nlohmann json (https://github.com/nlohmann/json)
 * Rest client: httplib (https://github.com/yhirose/cpp-httplib)
-* Websocket client: websocketpp (https://github.com/zaphoyd/websocketpp)
+* Websocket client: websocketpp (https://github.com/zaphoyd/websocketpp) via `vcpkg` (https://github.com/microsoft/vcpkg)
 
 
 # How to run
