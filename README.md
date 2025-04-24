@@ -22,7 +22,7 @@ https://www.bit.com/docs/en-us/spot.html#spot-api-hosts-production
 
 # Dependencies
 
-* Boost 1.88
+* Boost (This project use 1.88)
 * Json lib: nlohmann json (https://github.com/nlohmann/json)
 * Rest client: httplib (https://github.com/yhirose/cpp-httplib)
 

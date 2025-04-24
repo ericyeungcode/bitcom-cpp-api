@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Find Boost
-find_package(Boost 1.88 REQUIRED COMPONENTS system thread)
+find_package(Boost REQUIRED COMPONENTS system thread)
 
 # Find OpenSSL
 find_package(OpenSSL REQUIRED)
