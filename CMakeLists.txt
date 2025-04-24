@@ -12,6 +12,7 @@ find_package(OpenSSL REQUIRED)
 
 # Collect source files manually or via glob (with caution)
 file(GLOB SRC_FILES CONFIGURE_DEPENDS src/*.cpp)
+
 # Define executable target
 add_executable(${PROJECT_NAME}
     main.cpp

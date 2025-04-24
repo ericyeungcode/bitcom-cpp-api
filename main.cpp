@@ -4,8 +4,17 @@
 #include "utils.h"
 #include "json.hpp"
 #include "bitcom_rest.h"
+#include "BoostWsClient.hpp"
 
 using namespace std;
+
+std::string trimWssPrefix(const std::string& url) {
+    const std::string prefix = "wss://";
+    if (url.rfind(prefix, 0) == 0) { // rfind returns 0 if prefix is at the beginning
+        return url.substr(prefix.length());
+    }
+    return url;
+}
 
 void testRetApi(const std::string &apiHost, const std::string &ak, const std::string &sk)
 {
@@ -38,48 +47,93 @@ void testRetApi(const std::string &apiHost, const std::string &ak, const std::st
 }
 
 
-// void testPublicWs(const std::string & wsHost)
-// {
-//     run_ws_app(wsHost,
-//         [](client *c, websocketpp::connection_hdl, client::message_ptr msg)
-//         { std::cout << "on_message: " << msg->get_payload() << std::endl; },
-//         [](client *c, websocketpp::connection_hdl hdl)
-//         {
-//             nlohmann::json js;
-//             js["type"] = "subscribe";
-//             js["instruments"] = {"BTC-USDT-PERPETUAL"};
-//             js["channels"] = {"depth1"};
-//             js["interval"] = "raw";
-//             auto req = js.dump();
-//             std::cout << "on_open, ws request: " << req <<  std::endl;            
-//             c->send(hdl, req, websocketpp::frame::opcode::text);
-//         });
-// }
+void testPublicWs(const std::string & wsHost)
+{
+    net::io_context ioc;
+    ssl::context ssl_ctx(ssl::context::tlsv12_client);
 
-// void testPrivateWs(const std::string & wsHost, const std::string &restApiHost, const std::string &ak, const std::string &sk)
-// {
-//     BitcomRestApi bitRestClient(restApiHost, ak, sk);
-//     auto ret = bitRestClient.wsAuth({});
-//     auto authRet = nlohmann::json::parse(ret->body);
-//     cout << authRet.dump() << endl;
-//     auto token = authRet["data"]["token"];
+    // Skip cert verification (demo only!)
+    ssl_ctx.set_verify_mode(ssl::verify_none);
+    auto client = std::make_shared<BoostWsClient>(ioc, ssl_ctx);
+    client->on_open = [&]() {
+        std::cout << "Ws Connected: " << wsHost << "\n";
 
-//     run_ws_app(
-//         wsHost,
-//         [](client *c, websocketpp::connection_hdl, client::message_ptr msg)
-//         { std::cout << "on_message: " << msg->get_payload() << std::endl; },
-//         [=](client *c, websocketpp::connection_hdl hdl)
-//         {
-//             nlohmann::json js;
-//             js["type"] = "subscribe";
-//             js["channels"] = {"um_account"};
-//             js["interval"] = "100ms";
-//             js["token"] = token;
-//             auto req = js.dump();
-//             std::cout << "on_open, ws request: " << req <<  std::endl;
-//             c->send(hdl, req, websocketpp::frame::opcode::text);
-//         });
-// }
+        nlohmann::json js;
+        js["type"] = "subscribe";
+        js["instruments"] = {"BTC-USDT-PERPETUAL"};
+        js["channels"] = {"depth1"};
+        js["interval"] = "raw";
+        auto req = js.dump();
+        std::cout << "on_open, ws request: " << req <<  std::endl;
+        client->send(req);
+    };
+
+    client->on_message = [](const std::string& msg) {
+        std::cout << "Ws Received: " << msg << std::endl;
+    };
+
+    client->on_close = []() {
+        std::cout << "Ws Connection closed.\n";
+    };
+
+    client->on_error = [](const beast::error_code& ec) {
+        std::cerr << "Ws Error: " << ec.message() << std::endl;
+    };
+
+    auto noPrefixHost = trimWssPrefix(wsHost);
+    std::cout << "Connecting " << noPrefixHost << "\n";
+    client->connect(noPrefixHost, "443", "/");
+
+    ioc.run();
+}
+
+void testPrivateWs(const std::string & wsHost, const std::string &restApiHost, const std::string &ak, const std::string &sk)
+{
+    BitcomRestApi bitRestClient(restApiHost, ak, sk);
+    auto ret = bitRestClient.wsAuth({});
+    auto authRet = nlohmann::json::parse(ret->body);
+    cout << authRet.dump() << endl;
+    auto token = authRet["data"]["token"];
+
+
+    net::io_context ioc;
+    ssl::context ssl_ctx(ssl::context::tlsv12_client);
+
+    // Skip cert verification (demo only!)
+    ssl_ctx.set_verify_mode(ssl::verify_none);
+    auto client = std::make_shared<BoostWsClient>(ioc, ssl_ctx);
+    client->on_open = [&]() {
+        std::cout << "Ws Connected: " << wsHost << "\n";
+
+        nlohmann::json js;
+        js["type"] = "subscribe";
+        js["channels"] = {"um_account"};
+        js["interval"] = "100ms";
+        js["token"] = token;
+        auto req = js.dump();
+        std::cout << "on_open, ws request: " << req <<  std::endl;
+        client->send(req);
+    };
+
+    client->on_message = [](const std::string& msg) {
+        std::cout << "Ws Received: " << msg << std::endl;
+    };
+
+    client->on_close = []() {
+        std::cout << "Ws Connection closed.\n";
+    };
+
+    client->on_error = [](const beast::error_code& ec) {
+        std::cerr << "Ws Error: " << ec.message() << std::endl;
+    };
+
+    auto noPrefixHost = trimWssPrefix(wsHost);
+    std::cout << "Connecting " << noPrefixHost << "\n";
+    client->connect(noPrefixHost, "443", "/");
+
+    ioc.run();
+}
+
 
 int main(int argc, char **argv)
 {
@@ -103,9 +157,9 @@ int main(int argc, char **argv)
     if (mode == "rest") {
         testRetApi(varMap["BITCOM_REST_HOST"], varMap["BITCOM_AK"], varMap["BITCOM_SK"]);
     } else if (mode == "public-ws") {
-        //    testPublicWs(varMap["BITCOM_WS_HOST"]); 
+        testPublicWs(varMap["BITCOM_WS_HOST"]); 
     } else if (mode == "private-ws") {
-        // testPrivateWs(varMap["BITCOM_WS_HOST"], varMap["BITCOM_REST_HOST"], varMap["BITCOM_AK"], varMap["BITCOM_SK"]);
+        testPrivateWs(varMap["BITCOM_WS_HOST"], varMap["BITCOM_REST_HOST"], varMap["BITCOM_AK"], varMap["BITCOM_SK"]);
     } else {
         cout << "Invalid mode " << mode << endl;
         return -1;

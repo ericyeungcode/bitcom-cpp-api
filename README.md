@@ -13,8 +13,8 @@ https://www.bit.com/docs/en-us/spot.html#spot-api-hosts-production
 
 # Tested OS 
 
-* Ubuntu 20.04 LTS
-* MacOs Ventura
+* Ubuntu
+* MacOs
 
 # C++ version
 
@@ -22,28 +22,39 @@ https://www.bit.com/docs/en-us/spot.html#spot-api-hosts-production
 
 # Dependencies
 
+* Boost 1.88
 * Json lib: nlohmann json (https://github.com/nlohmann/json)
 * Rest client: httplib (https://github.com/yhirose/cpp-httplib)
-* Websocket client: websocketpp (https://github.com/zaphoyd/websocketpp) via `vcpkg` (https://github.com/microsoft/vcpkg)
 
 
 # How to run
 
-* setup env variables: `BITCOM_REST_HOST`, `BITCOM_WS_HOST`, `BITCOM_AK`, `BITCOM_SK`
+* setup env variables: 
+
+`BITCOM_REST_HOST`: Rest api host
+`BITCOM_WS_HOST`: Websocket host
+`BITCOM_AK`: Access-key
+`BITCOM_SK`: Private-key
+
+
+```bash
+cmake -S . -B out
+cmake --build out
+```
 
 
 ## Test REST api
 ```bash
 make
-./main rest
+./out/bit_client rest
 ```
 
 ## Test public websocket
 ```bash
-./main public-ws
+./out/bit_client public-ws
 ```
 
 ## Test private websocket
 ```bash
-./main private-ws
+./out/bit_client private-ws
 ```
