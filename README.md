@@ -14,7 +14,7 @@ https://www.bit.com/docs/en-us/spot.html#spot-api-hosts-production
 # Tested OS 
 
 * Ubuntu
-* MacOs
+* macOS
 
 # C++ version
 
@@ -29,13 +29,16 @@ https://www.bit.com/docs/en-us/spot.html#spot-api-hosts-production
 
 # How to run
 
-* setup env variables: 
+## Setup env variables: 
 
-`BITCOM_REST_HOST`: Rest api host
-`BITCOM_WS_HOST`: Websocket host
-`BITCOM_AK`: Access-key
-`BITCOM_SK`: Private-key
 
+* `BITCOM_REST_HOST`: Rest api host
+* `BITCOM_WS_HOST`: Websocket host
+* `BITCOM_AK`: Access-key
+* `BITCOM_SK`: Private-key
+
+
+## Build
 
 ```bash
 cmake -S . -B out
