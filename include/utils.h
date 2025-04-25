@@ -63,31 +63,6 @@ public:
                 result, &result_len);
 
     return to_hex_string(reinterpret_cast<const unsigned char*>(result), result_len);
-
-    // for (unsigned int i = 0; i < result_len; i++)
-    //     printf("%02x", result[i]);
-
-    // unsigned char hash[EVP_MAX_MD_SIZE];
-
-    // // HMAC_CTX hmac;  // old version, error: variable has incomplete type
-    // // 'HMAC_CTX' (aka 'hmac_ctx_st')
-
-    // HMAC_CTX *pHmac = HMAC_CTX_new();
-    // HMAC_CTX_reset(pHmac);
-    // HMAC_Init_ex(pHmac, &key[0], key.length(), EVP_sha256(), NULL);
-    // HMAC_Update(pHmac, (unsigned char *)&msg[0], msg.length());
-    // unsigned int len = 32;
-    // HMAC_Final(pHmac, hash, &len);
-    // HMAC_CTX_free(pHmac);
-
-    // std::stringstream ss;
-    // ss << std::hex << std::setfill('0');
-    // for (int i = 0; i < len; i++)
-    // {
-    //   ss << std::hex << std::setw(2) << (unsigned int)hash[i];
-    // }
-
-    // return (ss.str());
   }
 
   static long get_milli()

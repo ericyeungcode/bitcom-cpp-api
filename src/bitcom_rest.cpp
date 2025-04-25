@@ -131,16 +131,19 @@ httplib::Result doPrivateQueryGeneral(httplib::Client *client, const string &acc
     try
     {
         auto res = client->Get(url, headers);
-        cout << "status: " << res->status << "\n";
-        cout << "body: " << res->body << "\n";
-        return res;
+        if (res) {
+            cout << "status: " << res->status << "\n";
+            cout << "body: " << res->body << "\n";
+            return res;
+        } else {
+            cout << "GET failed: " << res.error() << ", url:" << url << "\n";
+        }
     }
     catch (...)
     {
         cout << "Exception occurs...\n";
-        httplib::Result dummy;
-        return dummy;
     }
+    return httplib::Result();
 }
 
 httplib::Result doPrivateCallWithJsonBodyGeneral(httplib::Client *client, const string &accessKey, const string &secretKey,
@@ -189,16 +192,19 @@ httplib::Result doPrivateCallWithJsonBodyGeneral(httplib::Client *client, const 
     try
     {
         auto res = client->Post(url, headers, jsonBodyStr, CONTENT_TYPE_JSON);
-        cout << "status: " << res->status << "\n";
-        cout << "body: " << res->body << "\n";
-        return res;
+        if (res) {
+            cout << "status: " << res->status << "\n";
+            cout << "body: " << res->body << "\n";
+            return res;
+        } else {
+            cout << "POST failed: " << res.error() << ", url:" << url << "\n";
+        }
     }
     catch (...)
     {
         cout << "Exception occurs...\n";
-        httplib::Result dummy;
-        return dummy;
     }
+    return httplib::Result();
 }
 
 BitcomRestApi::BitcomRestApi(const std::string &apiHost, const std::string &ak, const std::string &sk) : _apiHost(apiHost), _accessKey(ak), _privateKey(sk), _restClient(apiHost)
