@@ -146,8 +146,8 @@ int main(int argc, char **argv)
 
     map<string,string> varMap;
     for(const auto &x: {"BITCOM_REST_HOST", "BITCOM_WS_HOST", "BITCOM_AK", "BITCOM_SK"}) {
-        std::string val = getenv(x);
-        if (val.empty()) {
+        auto val = getenv(x);
+        if (!val) {
             cout << "Failed to lookup environment variable: " << x << endl;
             return -1;
         }
