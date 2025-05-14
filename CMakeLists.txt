@@ -20,7 +20,6 @@ add_executable(${PROJECT_NAME}
 )
 
 # Include directories
-# add /Users/ericyeung/private/github/cplusplus/include for BoostWsClient.hpp 
 target_include_directories(${PROJECT_NAME}
     PRIVATE
     ${Boost_INCLUDE_DIRS}
